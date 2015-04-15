@@ -1,0 +1,24 @@
+---
+- name: install monit
+  homebrew: name=monit state=latest
+
+- name: modify templates and copy into directory
+  template: src=jnlp_config.j2 dest={{ monit_path }}/config.cfg
+  template: src=monitrc.j2 dest={{ monit_path }}/monitrc
+  template: src=run_slave.sh.j2 dest={{ monit_path }}/run_slave.sh
+  template: src=startup.sh.j2 dest={{ monit_path }}/startup.sh
+
+- name: create launch agents directory
+  file: path={{ home_dir }}/Library/LaunchAgents state=directory
+
+- name: set monit to autostart
+  template: src=Loginscripts.Monit.plist.j2 dest={{ home_dir }}/Library/LaunchAgents/Loginscripts.Monit.plist
+
+- name: set monitrc mode to 0700
+  file: path={{ monit_path }}/monitrc mode=0700
+
+- name: load loginscripts with launchctl
+  shell: "launchctl load {{ home_dir }}/Library/LaunchAgents/Loginscripts.Monit.plist"
+ 
+- name: restart monit tasks
+  shell: "cd {{ jenkins_home_dir }}/monit/ && /usr/local/bin/monit restart all"

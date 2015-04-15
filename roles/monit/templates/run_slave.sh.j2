@@ -1,0 +1,13 @@
+#!/bin/bash
+source {{ monit_path }}/config.cfg
+
+if [ "$1" == "start" ]; then
+  exec 2>&1 /usr/bin/java -jar {{ jenkins_home_dir }}/slave.jar -jnlpUrl $JNLP_URL -secret $JNLP_SECRET &
+  echo $! > {{ monit_path }}/slave.pid;
+fi
+
+if [ "$1" == "stop" ]; then
+  kill `cat {{ monit_path }}/slave.pid`;
+fi
+
+exit 0

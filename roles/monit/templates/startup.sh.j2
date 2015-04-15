@@ -1,0 +1,9 @@
+#!/bin/bash
+
+killall monit
+killall java
+sleep 10
+
+/usr/local/bin/monit -c {{ monit_path }}/monitrc
+cd {{ monit_path }}
+/usr/local/bin/monit start all

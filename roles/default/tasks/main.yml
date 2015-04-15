@@ -1,0 +1,48 @@
+---
+- name: modify bashrc for brew usage
+  lineinfile:
+    dest={{ home_dir }}/.bashrc
+    state=present
+    insertafter=EOF
+    create=yes
+    line="export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
+    regexp="^export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin\:(.*)$"
+
+- name: update homebrew
+  homebrew: update_homebrew=yes
+
+- name: install ruby
+  homebrew: name=ruby state=latest
+
+- name: link ruby
+  shell: "/usr/local/bin/brew link --overwrite ruby"
+
+- name: install bundler
+  sudo_user: jenkins
+  shell: gem install bundler
+
+- name: install ios-sim
+  homebrew: name="ios-sim" state=latest
+
+- name: add caskroom/cask
+  homebrew_tap: tap=caskroom/cask state=present
+
+- name: install cask
+  homebrew: name="brew-cask" state=latest
+
+- name: install java
+  sudo: yes
+  homebrew_cask: name=java
+
+- name: enable developer mode
+  sudo: yes
+  shell: /usr/sbin/DevToolsSecurity -enable && /usr/sbin/dseditgroup -o edit -t group -a staff _developer
+
+- name: ensure jenkins directory exists
+  file: path={{ jenkins_home_dir }} state=directory
+
+- name: Download slave.jar
+  get_url: url={{ jenkins_url }}/jnlpJars/slave.jar dest={{ jenkins_home_dir }}/slave.jar
+
+- name: set authorized keys
+  template: src=authorized_keys.j2 dest={{ home_dir }}/.ssh/authorized_keys

@@ -1,0 +1,4 @@
+---
+jnlp_url: http://localhost
+jnlp_secret: SECRET
+xcode_version: "6.3"

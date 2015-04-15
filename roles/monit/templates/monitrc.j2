@@ -1,0 +1,9 @@
+set logfile {{ monit_path }}/monit.log
+set httpd port 2812 and
+use address localhost
+allow localhost
+set daemon  2
+
+check process slave with pidfile {{ monit_path }}/slave.pid
+          start = "/bin/bash -c '{{ monit_path }}/run_slave.sh start'"
+          stop = "/bin/bash -c '{{ monit_path }}/run_slave.sh stop'"

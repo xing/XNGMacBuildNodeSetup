@@ -1,0 +1,3 @@
+xcodeinstall_path: /usr/local/bin/xcode-install
+deliver_user: something@example.com
+deliver_password: yourpassword

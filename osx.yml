@@ -1,0 +1,11 @@
+---
+- hosts: macpro
+  gather_facts: False
+  vars:
+    - home_dir: /Users/jenkins
+    - jenkins_home_dir: /Users/jenkins/Jenkins
+    - jenkins_url: http://ci.example.com
+  roles:
+    - default
+    - monit
+    - xcode

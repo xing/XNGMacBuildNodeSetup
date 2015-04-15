@@ -1,0 +1,16 @@
+---
+- name: install xcode-install
+  sudo_user: jenkins
+  shell: gem install xcode-install
+
+- name: Check if version installed
+  command: "{{ xcodeinstall_path }} installed"
+  register: xcode_check
+
+- name: install xcode version
+  environment:
+      DELIVER_USER: deliver_user
+      DELIVER_PASSWORD: deliver_password
+  shell: "{{ xcodeinstall_path }} install {{ xcode_version }} --no-switch"
+  when: xcode_check.stdout.find(xcode_version) == -1
+
